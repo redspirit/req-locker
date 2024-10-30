@@ -11,7 +11,6 @@ const md5 = (val) => {
     params.cacheKey
     params.statusCode
     params.overrideSend
-    params.getStat
  */
 module.exports = (params = {}) => {
     let cache = new NodeCache({
@@ -50,10 +49,6 @@ module.exports = (params = {}) => {
                 res.send(data);
             }
         }
-
-        // res.on('finish', () => {
-        //     console.log('FINISH res', res);
-        // });
 
         next();
     };
