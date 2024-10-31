@@ -3,11 +3,26 @@
   "version": "1.0.4",
   "description": "Express middleware for caching and locking requests",
   "main": "index.js",
+  "bugs": {
+    "url": "https://github.com/redspirit/req-locker/issues"
+  },
+  "homepage": "https://github.com/redspirit/req-locker",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "RedSpirit",
+  "keywords": [
+    "express",
+    "middleware",
+    "cache",
+    "http",
+    "api",
+    "rest",
+    "locker",
+    "optimization",
+    "request"
+  ],
+  "license": "MIT",
   "dependencies": {
     "node-cache": "^5.1.2"
   },
