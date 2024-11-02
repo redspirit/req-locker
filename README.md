@@ -1,17 +1,19 @@
 # req-locker
 Express middleware for caching and locking requests
 
-Включает в себя 2 бибилиотеки: cache и locker.  
+It includes 2 libraries: cache and locker.
 
-## Установка
+[Russian ReadMe](README_ru.md)
+
+## Installation
 ```bash
 npm i req-locker
 ```
 
 ## cache 
-Обычное кеширование запросов в оперативной памяти сервера
+The usual caching of requests in the server's RAM
 
-Простейший пример:
+The simplest example:
 ```js
 const { cache } = require('req-locker');
 
@@ -20,39 +22,44 @@ app.use(cache({
 }));
 ```
 
-### Конфигурация:
-Функция **cache(params)** принимает один объект с параметрами:
-* `ttl`=60 - время жизни кеша в секундах
-* `checkperiod`=5 - интервал проверки кеша в секундах
-* `cacheKey` - функция определения ключа кеша по запросу, по-умолчанию берется MD5-хеш по url-запроса включая все его query и body, но пользователь может задать любой текстовый ключ, например кешировать только по одному query-параметру 
-* `statusCode`=200 - каким HTTP-кодом нужно ответить если вернулось кешированое значение
-* `overrideSend`=false - если этот параметр `true`, то библиотека перезапишет стандартный метод `res.send()` чтобы сохранить в кеше ответ на запрос. Если же значение `false`, то для сохранения кеша нужно возращать ответ на запрос с помощью нового метода `res.cachedSend()`
+### Configuration:
+The **cache(params)** function accepts a single object with parameters:
+* `ttl`=60 - cache lifetime in seconds
+* `checkperiod`=5 - the cache check interval in seconds
+* `cacheKey` - the function of determining the cache key by request, by default, an MD5 hash is taken by the url of the request, including all its query and body, but the user can specify any text key, for example, cache only one query parameter 
+* `statusCode`=200 - which HTTP code should be used to respond if the cached value is returned
+* `overrideSend`=false - if this parameter is `true`, the library will overwrite the standard `res.send()` method to save the response to the request in the cache. If the value is `false`, then to save the cache, you need to return a response to the request using the new method `res.cachedSend()`
 
 ## locker
-Эта middleware "удерживает" ретрай-запросы до тех пор, пока оригинальный запрос не вернет ответ.
+This middleware "holds" the retry requests until the original request returns a response.
 
-### Для чего это нужно?
-Представьте ситуацию, что у вас есть высоконагруженный запрос на сервере, который расчитывает, например, тарифы на услугу, он учитывает множество параметров
-и в обычном варианте он отвечает за 2 секунды. В пиковые моменты нагрузки отклик значительно возрастает, например, до 8-10 секунд.
-Если запрос нужно ждать так долго, то пользователи могут воспринять это как ошибку но попробовать вызвать запрос снова (все зависит от реализации клиентской стороны)
-или внешняя интеграция может вызывать ваш метод и делать ретрай запроса при большом таймауте. В этом случае и так перенагруженный сервис получает дополнительные ретрай-запросы
-которые еще больше вызывают нагрузку (в этом случае кеш не поможет, так как "первый" запрос еще не получил данные для кеширования).
-Получается эффект снежного кома, чем дольше отвечает сервер, тем больше получает ретраев и еще сильней нагружается вплоть до отказа.
+### What is it for?
+Imagine a situation where you have a highly loaded request on a server that calculates, for example, tariffs for a service, it takes into account many parameters
+and, in the usual version, it responds in 2 seconds. At peak load times, the response increases significantly, for example, up to 8-10 seconds.
+If the request needs to be waited for so long, then users may perceive it as an error but try to call the request again (it all depends on the implementation of the client side)
+or external integration can call your method and retry the request with a large timeout. In this case, the already overloaded service receives additional retry requests
+that cause even more load (in this case, the cache will not help, since the "first" request has not yet received data for caching).
+It turns out to be a snowball effect, the longer the server responds, the more retries it receives and even more heavily loaded up to failure.
 
-**locker** - это простой механизм, который просто находит ретрай-запросы по ключу (аналогично ключу кеша) и удерживает их коннект до тех пор, пока
-оригинальный запрос не получит данные для ответа. В этот момент сервер ответит и оригинальному запросу и всем ретраям одновременно одинаковым ответом.
-При этом запросы-ретраи **не будут** понапрасну загружать сервер предотвращая эффект снежного кома. 
- 
-Если вы столкнулись с подобной проблемой в моменты пиковой нагрузки, то locker, возможно, сможет вам помочь.
+**locker** is a simple mechanism that simply finds retry requests by key (similar to the cache key) and holds their connection until the
+original request receives data for a response. At this point, the server will respond to both the original request and all the retreats at the same time with the same response.
+At the same time, retry requests ** will not** unnecessarily load the server, preventing the snowball effect.
 
-Простейший пример:
+If you encounter a similar problem during peak load times, then locker may be able to help you.
+
+The simplest example:
 ```js
 const { locker } = require('req-locker');
 
 app.use(locker());
 ```
 
-### Конфигурация:
-Функция **locker(params)** принимает один объект с параметрами:
-* `reqKey` - функция определения ключа запроса, аналогично `cacheKey`
+### Configuration:
+The **locker(params)** function accepts a single object with parameters:
+* `reqKey` - function of determining the request key, similar to `cacheKey`
 * `statusCode`=200
+
+## ToDo:
+ - Improve documentation and examples
+ - Write unit tests
+ - Add methods for collecting statistics
