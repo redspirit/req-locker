@@ -1,6 +1,6 @@
 {
   "name": "req-locker",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Express middleware for caching and locking requests",
   "main": "index.js",
   "bugs": {
