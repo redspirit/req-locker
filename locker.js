@@ -39,7 +39,7 @@ module.exports = (params = {}) => {
         let origRes = lockedResponse[key];
         if (origRes) {
             // is retried
-            console.log('HOLD!');
+            console.log(`HOLD [${Object.keys(lockedResponse).length}]`);
             origRes.on('finish', () => {
                 console.log('RELEASE');
                 return res.status(params.statusCode || 200).send(origRes.responsePayload);

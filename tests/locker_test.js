@@ -35,13 +35,21 @@ app.listen(1234, async () => {
     makeRequest('req1');
     makeRequest('req1');
     makeRequest('req1');
+    makeRequest('req2');
+    makeRequest('req2');
+    makeRequest('req2');
+    makeRequest('req3');
+    makeRequest('req3');
     makeRequest('req1');
     makeRequest('req1');
     makeRequest('req1');
-    makeRequest('req1');
-    makeRequest('req1');
-    makeRequest('req1');
-    makeRequest('req1');
-    makeRequest('req1');
+
+    setTimeout(() => {
+        console.log('---------');
+        makeRequest('req1');
+        makeRequest('req1');
+    }, 10000)
+
+
 
 });
