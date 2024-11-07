@@ -44,10 +44,19 @@ module.exports = (params = {}) => {
                 console.log('RELEASE');
                 return res.status(params.statusCode || 200).send(origRes.responsePayload);
             });
+            // origRes.on('close', () => {
+            //     console.log('RELEASE close');
+            // });
         } else {
             // is original
+            res.setMaxListeners(30);
             lockedResponse[key] = res;
             res.on('finish', () => {
+                // console.log('on FINISH');
+                delete lockedResponse[key];
+            });
+            res.on('close', () => {
+                // console.log('on CLOSE');
                 delete lockedResponse[key];
             });
             next();
